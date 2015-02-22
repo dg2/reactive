@@ -45,7 +45,8 @@ case class ObservableBasicClient(serverUri: URI,
                                  subscriber: Subscriber[String])
   extends WebSocketClient(serverUri)
 {
-  override def onError(ex: Exception) = ex.printStackTrace()
+  override def onError(ex: Exception) =
+    if (!subscriber.isUnsubscribed) subscriber.onError(ex)
 
   override def onClose(code: Int, reason: String, remote: Boolean) = {
     println("Connection closed by " + (if (remote) "remote peer" else "us"))
